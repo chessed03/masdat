@@ -56,7 +56,7 @@ class Report extends Model
         $valIdCache = Cache::get( 'idIncrement' ) ?? 0;
 
         $limit = 10000;
-        $fecha = '2022-01-07';
+        $fecha = '2022-02-03';
         $id    = $valIdCache;
 
         $response = DB::table('reports')
@@ -80,7 +80,10 @@ class Report extends Model
                     'partner_id'    => $data->partner_id,
                     'advertiser_id' => $data->advertiser_id,
                     'lead_id'       => $data->lead_id,
-                    'esp_id'        => $data->esp_id
+                    'esp_id'        => $data->esp_id,
+                    'clicks'        => 1,
+                    'spams'         => 1,
+                    'convertions'   => 2
                 ];
 
                 $id++;
@@ -96,22 +99,52 @@ class Report extends Model
 
     }
 
-    public function viewWelcome()
+    public function viewWelcome( $date )
     {
-        $date  = '2022-01-04';
+        ini_set('max_execution_time', 300);
 
-        $limit = 12000;
+        $dateNow           = Carbon::createFromDate($date)->format('Y-m-d');
+        $dateStart         = Carbon::createFromDate($date)->firstOfMonth()->format('Y-m-d');
+        $dateEnd           = Carbon::createFromDate($date)->lastOfMonth()->format('Y-m-d');
+        $month             = Carbon::createFromDate($date)->format('F');
+        $dateEndThirdMonth = Carbon::createFromDate($dateStart)->addMonths(3)->subDay()->format('Y-m-d');
+        $thirMonth         = Carbon::createFromDate($dateEndThirdMonth)->format('F');
 
-        $response = DB::table('reports')
-            ->select('reports.id as id', 'reports.name as name', 'reports.date as date', 'advertisers.name as advertiser', 'affiliates.name as affiliate', 'esps.name as esp', 'leads.name as lead', 'partners.name as partner')
+        $countsMonthlyInfo = DB::table('reports')
+            ->selectRaw('SUM(clicks) AS clicks')
+            ->selectRaw('SUM(spams) AS spams')
+            ->selectRaw('SUM(convertions) AS convertions')
+            ->whereBetween('date', [ $dateStart, $dateEnd ])
+            ->first();
+
+        $countsQuarterlyInfo = DB::table('reports')
+            ->selectRaw('SUM(clicks) AS clicks')
+            ->selectRaw('SUM(spams) AS spams')
+            ->selectRaw('SUM(convertions) AS convertions')
+            ->whereBetween('date', [ $dateStart, $dateEndThirdMonth ])
+            ->first();
+
+        $limit = 5000;
+
+        $dataInfo = DB::table('reports')
+            ->select('reports.id as id', 'reports.name as name', 'reports.date as date', 'advertisers.name as advertiser', 'affiliates.name as affiliate', 'esps.name as esp', 'leads.email as lead', 'partners.name as partner')
             ->join('advertisers', 'reports.advertiser_id', '=', 'advertisers.id')
             ->join('affiliates', 'reports.affiliate_id', '=', 'affiliates.id')
             ->join('esps', 'reports.esp_id', '=', 'esps.id')
             ->join('leads', 'reports.lead_id', '=', 'leads.id')
             ->join('partners', 'reports.partner_id', '=', 'partners.id')
-            ->where('reports.date', $date)
+            ->where('reports.date', $dateNow)
+            ->orderBy('id', 'DESC')
             ->limit($limit)
-            ->get();
+            ->paginate(10);
+
+        $response = (object)[
+            'dataInfo'            => $dataInfo,
+            'month'               => $month,
+            'countsMonthlyInfo'   => $countsMonthlyInfo,
+            'thirMonth'           => $thirMonth,
+            'countsQuarterlyInfo' => $countsQuarterlyInfo,
+        ];
 
         return $response;
     }

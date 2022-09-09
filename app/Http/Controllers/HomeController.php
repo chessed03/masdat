@@ -11,7 +11,8 @@ class HomeController extends Controller
 
     public function index( Request $request )
     {
-        $data = Report::viewWelcome();
+
+        $data = Report::viewWelcome( $request->date );
 
         return view('welcome', [
             'data' => $data
