@@ -99,9 +99,14 @@ class Report extends Model
 
     }
 
-    public function viewWelcome( $date )
+    public function viewWelcome( $request )
     {
-        ini_set('max_execution_time', 300);
+        ini_set('max_execution_time', 1200);
+
+        $date              = $request->date;
+        $affiliate_id      = intval($request->affiliate_id);
+        $partner_id        = intval($request->partner_id);
+        $advertiser_id     = intval($request->advertiser_id);
 
         $dateNow           = Carbon::createFromDate($date)->format('Y-m-d');
         $dateStart         = Carbon::createFromDate($date)->firstOfMonth()->format('Y-m-d');
@@ -110,7 +115,7 @@ class Report extends Model
         $dateEndThirdMonth = Carbon::createFromDate($dateStart)->addMonths(3)->subDay()->format('Y-m-d');
         $thirMonth         = Carbon::createFromDate($dateEndThirdMonth)->format('F');
 
-        $countsMonthlyInfo = DB::table('reports')
+        /*$countsMonthlyInfo = DB::table('reports')
             ->selectRaw('SUM(clicks) AS clicks')
             ->selectRaw('SUM(spams) AS spams')
             ->selectRaw('SUM(convertions) AS convertions')
@@ -122,11 +127,11 @@ class Report extends Model
             ->selectRaw('SUM(spams) AS spams')
             ->selectRaw('SUM(convertions) AS convertions')
             ->whereBetween('date', [ $dateStart, $dateEndThirdMonth ])
-            ->first();
+            ->first();*/
 
-        $limit = 5000;
+        $limit = 12000;
 
-        $dataInfo = DB::table('reports')
+        /*$dataInfo = DB::table('reports')
             ->select('reports.id as id', 'reports.name as name', 'reports.date as date', 'advertisers.name as advertiser', 'affiliates.name as affiliate', 'esps.name as esp', 'leads.email as lead', 'partners.name as partner')
             ->join('advertisers', 'reports.advertiser_id', '=', 'advertisers.id')
             ->join('affiliates', 'reports.affiliate_id', '=', 'affiliates.id')
@@ -136,14 +141,29 @@ class Report extends Model
             ->where('reports.date', $dateNow)
             ->orderBy('id', 'DESC')
             ->limit($limit)
+            ->paginate(10);*/
+
+        $dataInfo = DB::table('reports')
+            ->select('reports.id as id', 'reports.name as name', 'reports.date as date', 'advertisers.name as advertiser', 'affiliates.name as affiliate', 'esps.name as esp', 'leads.email as lead', 'partners.name as partner')
+            ->join('advertisers', 'reports.advertiser_id', '=', 'advertisers.id')
+            ->join('affiliates', 'reports.affiliate_id', '=', 'affiliates.id')
+            ->join('esps', 'reports.esp_id', '=', 'esps.id')
+            ->join('leads', 'reports.lead_id', '=', 'leads.id')
+            ->join('partners', 'reports.partner_id', '=', 'partners.id')
+            ->where('reports.date', $dateNow)
+            ->where('reports.affiliate_id', $affiliate_id)
+            /*->where('reports.partner_id', $partner_id)
+            ->where('reports.advertiser_id', $advertiser_id)*/
+            ->orderBy('id', 'DESC')
+            ->limit($limit)
             ->paginate(10);
 
         $response = (object)[
             'dataInfo'            => $dataInfo,
             'month'               => $month,
-            'countsMonthlyInfo'   => $countsMonthlyInfo,
+            'countsMonthlyInfo'   => [],//$countsMonthlyInfo,
             'thirMonth'           => $thirMonth,
-            'countsQuarterlyInfo' => $countsQuarterlyInfo,
+            'countsQuarterlyInfo' => []//$countsQuarterlyInfo,
         ];
 
         return $response;

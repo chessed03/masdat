@@ -3,32 +3,86 @@
 <div class="row">
 
     <br>
+    <form action="#">
+        <div class="row g-3">
+            <div class="col">
 
-    <div class="col-6 p-5">
-        <div class="card">
-            <div class="card-header">
-                Monthly data <strong> ( {{ $data->month }} ) </strong>
-            </div>
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item">Clicks: <span> <strong> {{ $data->countsMonthlyInfo->clicks }} </strong> </span></li>
-                <li class="list-group-item">Spams: <span> <strong> {{ $data->countsMonthlyInfo->spams }} </strong> </span></li>
-                <li class="list-group-item">Converstions: <span> <strong> {{ $data->countsMonthlyInfo->convertions }} </strong> </span></li>
-            </ul>
-        </div>
-    </div>
+                <label for="date">Date</label>
 
-    <div class="col-6 p-5">
-        <div class="card">
-            <div class="card-header">
-                Quarterly data <strong> ( {{ $data->month }} - {{ $data->thirMonth }} ) </strong>
+                <input class="form-control" type="text" id="date" name="date" value="">
+
             </div>
-            <ul class="list-group list-group-flush">
-                <li class="list-group-item">Clicks: <span> <strong> {{ $data->countsQuarterlyInfo->clicks }} </strong> </span></li>
-                <li class="list-group-item">Spams: <span> <strong> {{ $data->countsQuarterlyInfo->spams }} </strong> </span></li>
-                <li class="list-group-item">Converstions: <span> <strong> {{ $data->countsQuarterlyInfo->convertions }} </strong> </span></li>
-            </ul>
+            <div class="col">
+
+                <label for="affiliate_id">Affiliate</label>
+
+                <select class="form-select" aria-label="Default select example" id="affiliate_id" name="affiliate_id">
+                    <option selected>Open this select menu</option>
+                    @foreach( $affiliates as $key => $item)
+                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                    @endforeach
+                </select>
+
+            </div>
+            <div class="col">
+
+                <label for="partner_id">Partner</label>
+
+                <select class="form-select" aria-label="Default select example" id="partner_id" name="partner_id">
+                    <option selected>Open this select menu</option>
+                    @foreach( $partners as $key => $item)
+                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                    @endforeach
+                </select>
+
+            </div>
+            <div class="col">
+
+                <label for="advertiser_id">Advertiser</label>
+
+                <select class="form-select" aria-label="Default select example" id="advertiser_id" name="advertiser_id">
+                    <option selected>Open this select menu</option>
+                    @foreach( $advertisers as $key => $item)
+                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                    @endforeach
+                </select>
+
+            </div>
+            <div class="col">
+
+                <label for="">&nbsp;</label>
+                <br>
+                <button type="submit" class="btn btn-primary">Search</button>
+
+            </div>
         </div>
-    </div>
+    </form>
+
+{{--    <div class="col-6 p-5">--}}
+{{--        <div class="card">--}}
+{{--            <div class="card-header">--}}
+{{--                Monthly data <strong> ( {{ $data->month }} ) </strong>--}}
+{{--            </div>--}}
+{{--            <ul class="list-group list-group-flush">--}}
+{{--                <li class="list-group-item">Clicks: <span> <strong> {{ $data->countsMonthlyInfo->clicks }} </strong> </span></li>--}}
+{{--                <li class="list-group-item">Spams: <span> <strong> {{ $data->countsMonthlyInfo->spams }} </strong> </span></li>--}}
+{{--                <li class="list-group-item">Converstions: <span> <strong> {{ $data->countsMonthlyInfo->convertions }} </strong> </span></li>--}}
+{{--            </ul>--}}
+{{--        </div>--}}
+{{--    </div>--}}
+
+{{--    <div class="col-6 p-5">--}}
+{{--        <div class="card">--}}
+{{--            <div class="card-header">--}}
+{{--                Quarterly data <strong> ( {{ $data->month }} - {{ $data->thirMonth }} ) </strong>--}}
+{{--            </div>--}}
+{{--            <ul class="list-group list-group-flush">--}}
+{{--                <li class="list-group-item">Clicks: <span> <strong> {{ $data->countsQuarterlyInfo->clicks }} </strong> </span></li>--}}
+{{--                <li class="list-group-item">Spams: <span> <strong> {{ $data->countsQuarterlyInfo->spams }} </strong> </span></li>--}}
+{{--                <li class="list-group-item">Converstions: <span> <strong> {{ $data->countsQuarterlyInfo->convertions }} </strong> </span></li>--}}
+{{--            </ul>--}}
+{{--        </div>--}}
+{{--    </div>--}}
 
     <div class="col-12">
 
