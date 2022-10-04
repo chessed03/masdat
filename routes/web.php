@@ -18,3 +18,4 @@ use Illuminate\Support\Facades\Route;
 });*/
 
 Route::get('/', [App\Http\Controllers\HomeController::class, 'index'])->name('home_index');
+Route::get('pusher', [App\Http\Controllers\HomeController::class, 'pusher'])->name('home_pusher');

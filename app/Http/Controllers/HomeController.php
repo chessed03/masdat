@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\MyEvent;
 use App\Models\Advertiser;
 use App\Models\Affiliate;
 use App\Models\Partner;
@@ -28,6 +29,23 @@ class HomeController extends Controller
             'partners'    => $partners,
             'advertisers' => $advertisers
         ]);
+    }
+
+    public function pusher( Request $request )
+    {
+        $message = "Hola";
+
+        $attemps = [1,2,3];
+
+        foreach ( $attemps as $attemp) {
+            sleep(5);
+            event( new MyEvent($message) );
+        }
+
+
+
+        return view('pusher');
+
     }
 
 }
